@@ -1,3 +1,9 @@
+# local settings
+secrets.h
+.pio
+.vscode
+workspace.code-workspace
+
 # Prerequisites
 *.d
 
