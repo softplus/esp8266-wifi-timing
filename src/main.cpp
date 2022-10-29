@@ -27,7 +27,7 @@ void setup() {
 	delay(2000); // wait some secs
 
 	// show settings
-	DEBUG_OUT("<setup_start>");
+	DEBUG_OUT("<start>");
 	DEBUG_OUTS("<strategy=");
 	#ifdef TRY_FASTCONNECT
 	DEBUG_OUTS("fastconnect,");
@@ -232,7 +232,7 @@ void setup() {
 	Serial.println(" ms");
 	#endif
 
-	DEBUG_OUT("<setup_finish>");
+	DEBUG_OUT("<complete>");
 }
 
 void loop() {
@@ -251,6 +251,8 @@ void loop() {
 			DEBUG_OUTS(WiFi.RSSI(i));//Signal strength in dBm  
 			DEBUG_OUTS("dBm, Channel ");
 			DEBUG_OUTS(WiFi.channel(i));
+			DEBUG_OUTS(" @ ");
+			DEBUG_OUTS(WiFi.BSSIDstr(i));
 			DEBUG_OUT("");
 		}
 	}
