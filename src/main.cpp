@@ -65,7 +65,10 @@ void setup() {
 
 	#ifdef TRY_FASTCONNECT
 	if ((!data_ok) || (wifi_settings.force_slow!=0)) {
-		DEBUG_OUT(data_ok?"settings_OK":"settings_bad");
+		DEBUG_OUTS("<slow_reason="); 
+		DEBUG_OUTS(data_ok?"forced":"settings_bad");
+		DEBUG_OUT(">");
+
 		DEBUG_OUT("doing slow connect");
 
 		TIME_START(ts_slow_1);
@@ -78,6 +81,7 @@ void setup() {
 			DEBUG_OUT(" Failed ");
 		} else {
 			// connected, cache settings
+			wifi_settings.force_slow = 0;
 			save_wifi_settings = true;
 			wifi_working = true;
 		}
@@ -131,11 +135,13 @@ void setup() {
 
 		bool recon_ok = false;
 		#ifdef TRY_USERECONNECT
-		TIME_START(ts_recon);
-		recon_ok = wifi_just_reconnect(&WiFi);
-		TIME_STOP(ts_recon, "just_reconnect");
-		wifi_working=recon_ok;
-		DEBUG_OUT(recon_ok?"<wifi_reconnect=true>":"<wifi_reconnect=false>");
+		if (!wifi_settings.force_slow) {
+			TIME_START(ts_recon);
+			recon_ok = wifi_just_reconnect(&WiFi);
+			TIME_STOP(ts_recon, "just_reconnect");
+			wifi_working=recon_ok;
+			DEBUG_OUT(recon_ok?"<wifi_reconnect=true>":"<wifi_reconnect=false>");
+		}
 		#endif
 
 		if (!recon_ok) {
@@ -143,10 +149,24 @@ void setup() {
 			bool try_slow = wifi_slow_connect(&WiFi);
 			TIME_STOP(ts_slow_3, "try_slow_connect");
 			wifi_working = try_slow;
+			if (wifi_settings.force_slow) { 
+				wifi_settings.force_slow=0; save_wifi_settings=true; 
+			}
 		}
 		if (!data_ok) save_wifi_settings=true;
 	#endif
 	DEBUG_OUT(wifi_working?"<wifi_ok=true>":"<wifi_ok=false>");
+
+	if (wifi_working) {
+		DEBUG_OUTS("<channel="); DEBUG_OUTS(WiFi.channel()); DEBUG_OUT(">");
+		DEBUG_OUTS("<bssid="); DEBUG_OUTS(WiFi.BSSIDstr().c_str()); DEBUG_OUT(">");
+	}
+
+	if (random(100)>90) {
+		wifi_settings.force_slow=1;
+		save_wifi_settings = true;
+		DEBUG_OUT("Wifi forced next run");
+	}
 
 	if (wifi_working && save_wifi_settings) {
 		DEBUG_OUT("Save settings to struct");
@@ -217,6 +237,23 @@ void setup() {
 
 void loop() {
 	// nothing, reboot
+	if (random(100)>90) {
+		DEBUG_OUT("Scanning wifi");
+		WiFi.mode(WIFI_STA);
+		WiFi.disconnect();
+		int n = WiFi.scanNetworks(false, true);
+
+		for (int i = 0; i < n; i++) {
+			DEBUG_OUTS(i + 1);
+			DEBUG_OUTS(": ");
+			DEBUG_OUTS(WiFi.SSID(i));// SSID
+			DEBUG_OUTS(" - ");
+			DEBUG_OUTS(WiFi.RSSI(i));//Signal strength in dBm  
+			DEBUG_OUTS("dBm, Channel ");
+			DEBUG_OUTS(WiFi.channel(i));
+			DEBUG_OUT("");
+		}
+	}
 	delay(500);
 	DEBUG_OUT("REBOOTING NOW");
 	ESP.restart();

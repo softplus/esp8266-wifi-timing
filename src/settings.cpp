@@ -32,7 +32,6 @@ void build_settings_from_wifi(WIFI_SETTINGS_T *data, ESP8266WiFiClass *w) {
     strncpy(data->mqtt_auth, MQTT_AUTH, 50);
     strncpy(data->mqtt_user, MQTT_USER, 50);
     data->mqtt_host_port = MQTT_SERVER_PORT;
-    data->force_slow = 0;
 }
 
 

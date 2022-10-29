@@ -47,7 +47,7 @@ int wifi_fast_connect(WIFI_SETTINGS_T *data, ESP8266WiFiClass *w) {
 		IPAddress(data->ip_gateway), IPAddress(data->ip_mask), 
 		IPAddress(data->ip_dns1), IPAddress(data->ip_dns2));
 	w->begin(data->wifi_ssid, data->wifi_auth, 
-		data->wifi_channel, data->wifi_bssid, true);
+		data->wifi_channel, data->wifi_bssid, false);
 	// wait for connection
 	uint32_t timeout = millis() + FAST_TIMEOUT;
 	w->reconnect();
