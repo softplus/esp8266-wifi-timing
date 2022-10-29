@@ -1,0 +1,143 @@
+g: median 197ms, p90 1201ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, true);
+	//w->reconnect();
+
+i: median 587ms, p90 1749ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, false);
+	w->reconnect();
+
+j: median 940ms, p90 1552ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, false);
+	wifi_station_connect();
+
+k: median 2911ms, p90 3915ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, 0, NULL, false);
+	wifi_station_connect();
+
+l: median 2908ms, p90 3549ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, 0, NULL, true);
+	//wifi_station_connect();
+
+m: median 947ms, p90 2910ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, 0, data->wifi_bssid, true);
+	//wifi_station_connect();
+
+n: median 197ms, p90 840ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, true);
+	//wifi_station_connect();
+
+o: median 1086ms, p90 1146ms
+	//w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, true);
+	//wifi_station_connect();
+
+p: median 188ms, p90 1227ms
+	w->persistent(true); // from "g"
+	w->config(IPAddress(data->ip_address),
+	w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, true);
+	//wifi_station_connect();
+    // 5x MQTT publish
+
+q: median 190ms, p90 278ms
+    //bool can_precon = preconnect_ip(&wclient, wifi_settings.mqtt_host_ip, wifi_settings.mqtt_host_port);
+	mqtt_client.setServer(data->mqtt_host_ip, data->mqtt_host_port);
+
+r: median 202ms, p90 841ms
+    //bool can_precon = preconnect_ip(&wclient, wifi_settings.mqtt_host_ip, wifi_settings.mqtt_host_port);
+	//mqtt_client.setServer(data->mqtt_host_ip, data->mqtt_host_port);
+    mqtt_client.setServer(data->mqtt_host_str, data->mqtt_host_port);
+
+slow: median 3898ms, p90 4267ms
+
++ variant: debug mode
+
+N debug: ---
+Try wifi_fast_connect
+fpm close 3 
+mode : sta(c4:5b:be:4a:69:34)
+add if0
+wifi evt: 8
+wifi evt: 2
+scandone
+state: 0 -> 2 (b0)
+state: 2 -> 3 (0)
+state: 3 -> 5 (10)
+add 0
+aid 3
+cnt 
+
+connected with XXXXXX, channel 11
+ip:192.168.178.111,mask:255.255.255.0,gw:192.168.178.1
+ip:192.168.178.111,mask:255.255.255.0,gw:192.168.178.1
+wifi evt: 0
+wifi evt: 3
+<wifi_fast_connect=168166>
+---
+
+O DEBUG ---
+
+Try wifi_fast_connect
+fpm close 3 
+mode : sta(c4:5b:be:4a:69:34)
+add if0
+wifi evt: 8
+wifi evt: 2
+scandone
+state: 0 -> 2 (b0)
+state: 2 -> 3 (0)
+state: 3 -> 5 (10)
+add 0
+aid 3
+cnt 
+
+connected with XXXXXX, channel 11
+ip:192.168.178.111,mask:255.255.255.0,gw:192.168.178.1
+ip:192.168.178.111,mask:255.255.255.0,gw:192.168.178.1
+wifi evt: 0
+wifi evt: 3
+<wifi_fast_connect=1054361>
+
+---
+
+SLOW DEBUG ---
+
+<slow_reason=forced>
+doing slow connect
+fpm close 3 
+mode : sta(c4:5b:be:4a:69:34)
+add if0
+wifi evt: 8
+wifi evt: 2
+scandone
+state: 0 -> 2 (b0)
+state: 2 -> 3 (0)
+state: 3 -> 5 (10)
+add 0
+aid 3
+cnt 
+
+connected with XXXXXX, channel 11
+dhcp client start...
+wifi evt: 0
+ip:192.168.178.111,mask:255.255.255.0,gw:192.168.178.1
+wifi evt: 3
+<slow_connect_1=3791898>
+
+
+---
+
