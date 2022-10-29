@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Tries to open the serial port, displays logs.
+# Parses for <field=value> items and saves them in a CSV/TSV file.
 # Automatically uses venv, if it exists.
 #
 # Usage:

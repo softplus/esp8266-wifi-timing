@@ -144,7 +144,7 @@ if __name__ == "__main__":
                 buffer=""
         except: 
             print(sys.exc_info()[1])
-            break
+            #break
     # close nicely
     serial_port.close()
     
