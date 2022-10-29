@@ -3,6 +3,7 @@ secrets.h
 .pio
 .vscode
 workspace.code-workspace
+.venv
 
 # Prerequisites
 *.d
