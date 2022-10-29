@@ -4,6 +4,7 @@ secrets.h
 .vscode
 workspace.code-workspace
 .venv
+__*
 
 # Prerequisites
 *.d

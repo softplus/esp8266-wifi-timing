@@ -26,7 +26,7 @@ if [[ -f "$SCRIPT_DIR/.venv/pyvenv.cfg" ]]; then
     USE_VENV=1
 fi
 
-python $SCRIPT_DIR/serial_monitor.py -d $DEVICE
+python $SCRIPT_DIR/serial_parse.py -d $DEVICE
 echo 
 
 if [ $USE_VENV == "1" ]; then
