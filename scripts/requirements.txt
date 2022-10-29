@@ -1,4 +1,2 @@
 serial
 pyserial
-tqdm
-hidapi
