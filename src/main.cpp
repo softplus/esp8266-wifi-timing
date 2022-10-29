@@ -14,9 +14,9 @@
 struct WIFI_SETTINGS_T wifi_settings;
 
 #define TRY_FASTCONNECT
-#define TRY_AUTORECONNECT
+//#define TRY_AUTORECONNECT
 //#define TRY_ENABLESTA
-#define TRY_USERECONNECT
+//#define TRY_USERECONNECT
 #define TRY_STATICIP
 
 void setup() {
@@ -24,11 +24,13 @@ void setup() {
 	WiFi.setAutoConnect(false);
 
 	Serial.begin(115200);
-	delay(2000); // wait some secs
+	delay(1500); // wait some secs
 
 	// show settings
 	DEBUG_OUT("<start>");
 	DEBUG_OUTS("<strategy=");
+	DEBUG_OUTS("ch:?t,esp01,nodebug,");
+	DEBUG_OUTS("sdk-default,")
 	#ifdef TRY_FASTCONNECT
 	DEBUG_OUTS("fastconnect,");
 	#else
@@ -195,8 +197,7 @@ void setup() {
 
 		DEBUG_OUT("preconnect_ip ");
 		TIME_START(ts_preconnect);
-		bool can_precon = preconnect_ip(&wclient, wifi_settings.mqtt_host_ip, 
-				wifi_settings.mqtt_host_port);
+		bool can_precon = preconnect_ip(&wclient, wifi_settings.mqtt_host_ip, wifi_settings.mqtt_host_port);
 		TIME_STOP(ts_preconnect, "preconnect_ip");
 
 		if (can_precon) {
