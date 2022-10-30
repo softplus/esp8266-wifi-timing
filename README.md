@@ -1,8 +1,17 @@
 # ESP01 / ESP8266 wifi speed testing code
 
 Check various ESP8266 / Arduino-framework wifi connection strategies and their timings.
+Timing includes publishing topics to the local MQTT server (which confirms a good wifi connection).
 What's the fastest way to connect? Where are weird things happening in the background?
 We'll see.
+
+Configuration used:
+
+* ESP8266 basic board ([ESP-01, 512MB](https://s.click.aliexpress.com/e/_DevU043))
+* USB/TTL programmer board ([like this](https://s.click.aliexpress.com/e/_DkvhxT9))
+* [Platformio](https://platformio.org/)
+* [ESP8266 Arduino framework](https://docs.platformio.org/en/stable/platforms/espressif8266.html) in Platformio
+* Wifi AP with WPA2, [MQTT server](https://mosquitto.org/) on local network using IPv4
 
 ## TLDR: Fastest ESP8266 wifi connection time can be less than 170ms
 
@@ -107,6 +116,7 @@ The weird & wonderful:
 * The ESP SDK code in [ESP8266WiFiSTA.cpp](https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFiSTA.cpp#L123) shows how the connection is built, but you can't check the code for what actually happens. Howver, you can tell that using `persistent(true)` without specifying a BSSID will result in the persistent data not being used (despite having the BSSID too).
 * In the [code](https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFiSTA.cpp#L195), you also see that `wifi_station_connect()` is called before setting the channel number. Does this mean the persistent channel is not used? Weird.
 * The debug output (see below) is the same for all connection types; it's useless to look at for speed optimizations.
+* The SDK versions provided by Platformio (v2.2.1 - 2.2.x, pre-3.0; 2018 to 2019) all have similar timings.
 * The unclear difference between `persistent(true)` + connect with BSSID & channel imo suggest that future SDK versions may be different, and that ESP32 may handle this differently. It's unclear what `persistent(true)` actually does. Magic.
 
 ## ESP8266 Wifi debug output
