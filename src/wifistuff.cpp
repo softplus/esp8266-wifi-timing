@@ -30,6 +30,8 @@
 #include "settings.h"
 #include "wifistuff.h"
 
+/* Show the current connection information on Serial
+ */
 void show_connection(ESP8266WiFiClass *w) {
     #ifdef DEBUG_MODE
     Serial.print("WiFi Status - State:  "); Serial.println(w->status()); 
@@ -44,6 +46,8 @@ void show_connection(ESP8266WiFiClass *w) {
     #endif
 }
 
+/* Do a slow / connection 
+ */
 int wifi_slow_connect(ESP8266WiFiClass *w) {
 	#define SLOW_TIMEOUT 10000 // ms
 	w->mode(WIFI_STA);
@@ -53,6 +57,8 @@ int wifi_slow_connect(ESP8266WiFiClass *w) {
 	return (w->status() == WL_CONNECTED);
 }
 
+/* To test just reconnecting without building a connection
+ */
 int wifi_just_reconnect(ESP8266WiFiClass *w) {
 	uint32_t timeout = millis() + 5000; // max 5s
 	w->mode(WIFI_STA);
@@ -61,20 +67,17 @@ int wifi_just_reconnect(ESP8266WiFiClass *w) {
 	return (w->status() == WL_CONNECTED);
 }
 
+/* Try doing a fast connection, with cached BSSID, channel & persist
+ */
 int wifi_fast_connect(WIFI_SETTINGS_T *data, ESP8266WiFiClass *w) {
 	#define FAST_TIMEOUT 5000 // ms
 	// try fast connect
-	w->persistent(true); // from "g"
+	w->persistent(true);
 	w->mode(WIFI_STA);
 	w->config(IPAddress(data->ip_address),
 		IPAddress(data->ip_gateway), IPAddress(data->ip_mask), 
 		IPAddress(data->ip_dns1), IPAddress(data->ip_dns2));
-	//w->begin(data->wifi_ssid, data->wifi_auth, 
-	//	data->wifi_channel, data->wifi_bssid, false);
-	int ch = data->wifi_channel;
-	//ch=6;
-	//w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, false);
-	w->begin(data->wifi_ssid, data->wifi_auth, ch, data->wifi_bssid, true);
+	w->begin(data->wifi_ssid, data->wifi_auth, data->wifi_channel, data->wifi_bssid, true);
 	// wait for connection
 	uint32_t timeout = millis() + FAST_TIMEOUT;
 	//wifi_set_channel(ch);
@@ -90,6 +93,8 @@ int wifi_fast_connect(WIFI_SETTINGS_T *data, ESP8266WiFiClass *w) {
 	return (w->status() == WL_CONNECTED);
 }
 
+/* Connect to this IP address & port; saves MQTT time
+ */
 int preconnect_ip(WiFiClient *wclient, IPAddress ip, int port) {
 	#define PRECONNECT_TIMEOUT 5000
 	uint32_t timeout = millis() + PRECONNECT_TIMEOUT;
@@ -97,7 +102,8 @@ int preconnect_ip(WiFiClient *wclient, IPAddress ip, int port) {
 	return (wclient->connected());
 }
 
-
+/* Publish something to our MQTT server
+ */
 int publish_mqtt(WiFiClient *wclient, WIFI_SETTINGS_T *data, 
 		const char *topic, const char *value) {
 	// no timeouts no ragrets

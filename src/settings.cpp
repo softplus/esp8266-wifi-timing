@@ -28,6 +28,8 @@
 #include "settings.h"
 #include "secrets.h"
 
+/* Use wifi object to build settings
+ */
 void build_settings_from_wifi(WIFI_SETTINGS_T *data, ESP8266WiFiClass *w) {
     // main settings
     data->magic = MAGIC_NUM;
@@ -55,7 +57,8 @@ void build_settings_from_wifi(WIFI_SETTINGS_T *data, ESP8266WiFiClass *w) {
     data->mqtt_host_port = MQTT_SERVER_PORT;
 }
 
-
+/* save settings to flash
+ */
 void save_settings_to_flash(WIFI_SETTINGS_T *data) {
 	char buf[sizeof(WIFI_SETTINGS_T)];
 	memcpy(&buf, data, sizeof(WIFI_SETTINGS_T));
@@ -64,6 +67,8 @@ void save_settings_to_flash(WIFI_SETTINGS_T *data) {
 	EEPROM.end();
 }
 
+/* Read settings from flash, check if magic number is ok
+ */
 int get_settings_from_flash(WIFI_SETTINGS_T *data) { // dunno why not parameters
 	char buf[sizeof(WIFI_SETTINGS_T)];
 	EEPROM.begin(sizeof(WIFI_SETTINGS_T));
@@ -73,6 +78,8 @@ int get_settings_from_flash(WIFI_SETTINGS_T *data) { // dunno why not parameters
 	return (data->magic == MAGIC_NUM);
 }
 
+/* Display the current settings on Serial
+ */
 void display_settings(WIFI_SETTINGS_T *data) {
 	#ifdef DEBUG_MODE
 	char buf[100];

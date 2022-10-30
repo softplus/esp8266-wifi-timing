@@ -18,6 +18,9 @@
 */
 
 /* Main functions for ESP8266 fast wifi connection testing
+ * 
+ * Don't copy & paste these - this is only used for speed testing.
+ * 
  */
 
 #include <Arduino.h>
@@ -30,17 +33,21 @@
 #include "settings.h"
 #include "wifistuff.h"
 
+// Our testing MQTT topic
 #define MQTT_ACTION_TOPIC "wled/testing"
 #define MQTT_ACTION_VALUE "T"
 
 struct WIFI_SETTINGS_T wifi_settings;
 
+// options for speed tests
 #define TRY_FASTCONNECT
 //#define TRY_AUTORECONNECT
 //#define TRY_ENABLESTA
 //#define TRY_USERECONNECT
 #define TRY_STATICIP
 
+/* main setup function, does the wifi connection + mqtt publishing
+ */
 void setup() {
 	// requirements
 	WiFi.setAutoConnect(false);
@@ -258,6 +265,11 @@ void setup() {
 	DEBUG_OUT("<complete>");
 }
 
+/* main loop:
+ *   10% of the time: scan the wifi networks and display them; 
+ *                    useful for checking if the right BSSID, channel
+ *   Then: reboot
+ */
 void loop() {
 	// nothing, reboot
 	if (random(100)>90) {
