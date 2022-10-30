@@ -4,7 +4,7 @@ Check various ESP8266 / Arduino-framework wifi connection strategies and their t
 What's the fastest way to connect? Where are weird things happening in the background?
 We'll see.
 
-## TLDR: Fastest ESP8266 Wifi connection
+## TLDR: Fastest ESP8266 wifi connection time can be less than 170ms
 
 The fastest connection is done with the following setup:
 
@@ -96,6 +96,18 @@ Some of the variants tested (see [variations.txt](variations.txt) for more):
 The last variant ("P"; similar to the second-last one) is the one that's overall the fastest, with a median time from start to publishing 5 MQTT topics of 188ms (stddev: 334ms).
 
 The MQTT portion of variant "P" (connecting to server, publishing topics) has a median time of 19ms (p90: 25ms, stddev: 290ms!). Without doing an IP/port pre-connection (variant "Q"), the total median time goes to 190ms (p90: 278ms, stddev: 257ms), so the IP pre-connection does not save much. Using the hostname instead of IP address (requiring a DNS lookup; variant "R"), the total time goes to median 202ms (p90 840ms, stddev 410ms), so caching the IP address is a good idea.
+
+## Anecdotes
+
+The weird & wonderful:
+
+* `persistent()` is [disabled by default](https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/generic-class.html#persistent) in the ESP SDK for wifi. I suspect because of flash wear? YOLO.
+* Platformio uses ancient ESP8266 Non-OS SDKs -- the Arduino libraries are much newer. [Issue filed in 2018](https://github.com/platformio/platform-espressif8266/issues/85).
+* Connecting with BSSID and channel (without `persistent(true)`), will result in scanning for a channel, and may use a different channel. This adds ca 900ms to the connection time. This is probably a bug. This is the configuration that most external mentions for speed optimization suggest, which is better than nothing, but still slower than it needs to be.
+* The ESP SDK code in [ESP8266WiFiSTA.cpp](https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFiSTA.cpp#L123) shows how the connection is built, but you can't check the code for what actually happens. Howver, you can tell that using `persistent(true)` without specifying a BSSID will result in the persistent data not being used (despite having the BSSID too).
+* In the [code](https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFiSTA.cpp#L195), you also see that `wifi_station_connect()` is called before setting the channel number. Does this mean the persistent channel is not used? Weird.
+* The debug output (see below) is the same for all connection types; it's useless to look at for speed optimizations.
+* The unclear difference between `persistent(true)` + connect with BSSID & channel imo suggest that future SDK versions may be different, and that ESP32 may handle this differently. It's unclear what `persistent(true)` actually does. Magic.
 
 ## ESP8266 Wifi debug output
 
