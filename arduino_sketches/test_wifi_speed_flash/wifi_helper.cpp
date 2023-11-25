@@ -80,7 +80,13 @@ bool WifiHelper::_save_settings() {
 /* do a fast-connect, if we can, return true if ok
  */
 bool WifiHelper::_fast_connect() {
-  if (_settings.wifi_channel==0 || _settings.wifi_bssid[0]==0) return false;
+  if (_settings.wifi_channel==0 || (
+    _settings.wifi_bssid[0]==0 &&
+    _settings.wifi_bssid[1]==0 &&
+    _settings.wifi_bssid[2]==0 &&
+    _settings.wifi_bssid[3]==0 &&
+    _settings.wifi_bssid[4]==0 &&
+    _settings.wifi_bssid[5]==0)) return false;
   WiFi.persistent(true); 
   WiFi.mode(WIFI_STA);
   WiFi.config(_settings.ip_address, _settings.ip_gateway, _settings.ip_mask);
